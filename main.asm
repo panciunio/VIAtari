@@ -17,7 +17,7 @@
 ;  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 ;  MA 02110-1301, USA.
 
-
+keycode equ $02fc
 
          ORG   $6000
          
@@ -28,29 +28,33 @@ start   jsr     via_init
         jsr     lcd_init
         jsr     lcd_clear
        
-        lda     #$aa                ; write zebra to LCD memory
+        lda     #$ff               ; write pattern to LCD memory
         sta     pattern
         jsr     lcd_pfill
+        lda     #$21
+        jsr     waitkbs
 
  ;test lcd 
- 
-
-        lda     #(S1D_SETPAGE)
+    
+        lda     #(S1D_SETPAGE0)
         jsr     lcd_write_cmd       
         lda     #S1D_STARTLINE
         jsr     lcd_write_cmd       ; set first column
         lda     #(S1D_SETCOLL_L +3)
         jsr     lcd_write_cmd
-        
+
+                
         ldx     #$00
 charl0  lda     font5x8,x                                                   
         eor     #$ff
         jsr     lcd_write_data
         inx
-        cpx     #170        
-        bne     charl0      
+        cpx     #(LCD_MAX_COLLS - 2)      
+        bne     charl0 
+        lda     #$21
+        jsr     waitkbs     
  
-        lda     #(S1D_SETPAGE+1)
+        lda     #(S1D_SETPAGE1)
         jsr     lcd_write_cmd       
         lda     #S1D_STARTLINE
         jsr     lcd_write_cmd       ; set first column
@@ -58,42 +62,213 @@ charl0  lda     font5x8,x
         jsr     lcd_write_cmd
         
         ldx     #$00
-charl1  lda     $e100,x
+charl1  lda     $e200,x
         jsr     lcd_write_data
         inx
-        cpx     #170        
+        cpx     #(LCD_MAX_COLLS - 2)      
         bne     charl1
+        lda     #$21
+        jsr     waitkbs
         
-        lda     #(S1D_SETPAGE+2)
+        lda     #(S1D_SETPAGE2)
         jsr     lcd_write_cmd       
         lda     #S1D_STARTLINE
         jsr     lcd_write_cmd       ; set first column
-        lda     #(S1D_SETCOLL_L +3)
+        lda     #(S1D_SETCOLL_L +2)
         jsr     lcd_write_cmd
         
-        ldx     #$00
-charl2  lda     $e200,x
+        ldx     #$00                ; get data from Atari chars generator (ROM)
+charl2  lda     $e100,x
         jsr     lcd_write_data
         inx
-        cpx     #170        
+        cpx     #(LCD_MAX_COLLS - 2)     
         bne     charl2
+        lda     #$21
+        jsr     waitkbs
         
-        lda     #(S1D_SETPAGE+3)
+        lda     #(S1D_SETPAGE3)
         jsr     lcd_write_cmd       
         lda     #S1D_STARTLINE
         jsr     lcd_write_cmd       ; set first column
-        lda     #(S1D_SETCOLL_L +3)
+        lda     #(S1D_SETCOLL_L+3)
         jsr     lcd_write_cmd
         
         ldx     #$00
-charl3  lda     $e300,x
+charl3  lda     $e100,x
         jsr     lcd_write_data
         inx
-        cpx     #170        
-        bne     charl3              
+        cpx     #(LCD_MAX_COLLS - 2)    
+        bne     charl3 
+        lda     #$21
+        jsr     waitkbs             
+
+        lda     #(S1D_SETPAGE4)
+        jsr     lcd_write_cmd       
+        lda     #S1D_STARTLINE
+        jsr     lcd_write_cmd       ; set first column
+        lda     #(S1D_SETCOLL_L+3)
+        jsr     lcd_write_cmd
         
+        ldx     #$00
+charl4  lda     $e100,x
+        jsr     lcd_write_data
+        inx
+        cpx     #(LCD_MAX_COLLS - 2)     
+        bne     charl4 
+        lda     #$21
+        jsr     waitkbs     
+        
+        lda     #(S1D_SETPAGE5)
+        jsr     lcd_write_cmd       
+        lda     #S1D_STARTLINE
+        jsr     lcd_write_cmd       ; set first column
+        lda     #(S1D_SETCOLL_L+3)
+        jsr     lcd_write_cmd
+        
+        ldx     #$00
+charl5  lda     font8x8,x
+        eor     #$ff
+        jsr     lcd_write_data
+        inx
+        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
+        bne     charl5 
+        lda     #$21
+        jsr     waitkbs 
+        
+pic:       
+        lda     #(S1D_SETPAGE0)
+        jsr     lcd_write_cmd       
+        lda     #S1D_STARTLINE
+        jsr     lcd_write_cmd       ; set first column
+        lda     #(S1D_SETCOLL_L+3)
+        jsr     lcd_write_cmd
+        ldx     #$00
+pic0    lda     $d20a       ;A800,x
+        jsr     lcd_write_data
+        inx
+        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
+        bne     pic0
+        
+        lda     #(S1D_SETPAGE1)
+        jsr     lcd_write_cmd       
+        lda     #S1D_STARTLINE
+        jsr     lcd_write_cmd       ; set first column
+        lda     #(S1D_SETCOLL_L+3)
+        jsr     lcd_write_cmd
+        ldx     #$00
+pic1    lda     $d20a       ;A800+162,x
+        jsr     lcd_write_data
+        inx
+        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
+        bne     pic1     
+        
+        lda     #(S1D_SETPAGE2)
+        jsr     lcd_write_cmd       
+        lda     #S1D_STARTLINE
+        jsr     lcd_write_cmd       ; set first column
+        lda     #(S1D_SETCOLL_L+3)
+        jsr     lcd_write_cmd
+        ldx     #$00
+pic2    lda     $d20a       ;A800+162+162,x
+        jsr     lcd_write_data
+        inx
+        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
+        bne     pic2
+        
+        lda     #(S1D_SETPAGE3)
+        jsr     lcd_write_cmd       
+        lda     #S1D_STARTLINE
+        jsr     lcd_write_cmd       ; set first column
+        lda     #(S1D_SETCOLL_L+3)
+        jsr     lcd_write_cmd
+        ldx     #$00
+pic3    lda     font8x8,x
+        jsr     lcd_write_data
+        inx
+        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
+        bne     pic3
+        
+        lda     #(S1D_SETPAGE4)
+        jsr     lcd_write_cmd       
+        lda     #S1D_STARTLINE
+        jsr     lcd_write_cmd       ; set first column
+        lda     #(S1D_SETCOLL_L+3)
+        jsr     lcd_write_cmd
+        ldx     #$00
+pic4    lda     $d20a       ;A800+162+162+162+162,x
+        jsr     lcd_write_data
+        inx
+        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
+        bne     pic4
+        
+        lda     #(S1D_SETPAGE5)
+        jsr     lcd_write_cmd       
+        lda     #S1D_STARTLINE
+        jsr     lcd_write_cmd       ; set first column
+        lda     #(S1D_SETCOLL_L+3)
+        jsr     lcd_write_cmd
+        ldx     #$00
+pic5    lda     $d20a       ;A800+162+162+162+162+162,x
+        jsr     lcd_write_data
+        inx
+        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
+        bne     pic5
+        
+        lda     #(S1D_SETPAGE6)
+        jsr     lcd_write_cmd       
+        lda     #S1D_STARTLINE
+        jsr     lcd_write_cmd       ; set first column
+        lda     #(S1D_SETCOLL_L+3)
+        jsr     lcd_write_cmd
+        ldx     #$00
+pic6    lda     $d20a       ;A800+162+162+162+162+162+162,x
+        jsr     lcd_write_data
+        inx
+        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
+        bne     pic6
+        
+        lda     #(S1D_SETPAGE7)
+        jsr     lcd_write_cmd       
+        lda     #S1D_STARTLINE
+        jsr     lcd_write_cmd       ; set first column
+        lda     #(S1D_SETCOLL_L+3)
+        jsr     lcd_write_cmd
+        ldx     #$00
+pic7    lda     $d20a       ;A800+162+162+162+162+162+162+162,x
+        jsr     lcd_write_data
+        inx
+        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
+        bne     pic7
+        
+        lda     keycode
+        cmp     #$0c
+        beq     stop
+            
+        jmp     pic
+        
+stop:
+        
+                
+        
+        ;lda     #$21
+        ;jsr     waitkbs 
+                
         brk
 
+;subroutines
+
+waitkbs:
+        pha
+              
+        lda     #$ff
+        sta     keycode
+        
+        pla
+        
+kbloop  cmp     keycode
+        bne     kbloop
+        
+        rts
 
         ICL "VIA6522.asm"
         ICL "S1D15705.asm"

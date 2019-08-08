@@ -93,6 +93,9 @@ lcd_write_data:
             rts
 
 lcd_read_stat:  
+            tya
+            pha
+            
             lda #$ff
             and #S1D15705_CS_N
             sta S1D15705_CTRLPORT               ; set chip enabled
@@ -109,6 +112,9 @@ lcd_read_stat:
             
             ldy #$ff
             sty S1D15705_DATAPORT_DIR           ; set DATAPORT as output
+            
+            pla
+            tay
             
             rts
             
