@@ -1,0 +1,148 @@
+
+pic:       
+        lda     #(S1D_SETPAGE0)
+        jsr     lcd_write_cmd       
+        lda     #S1D_STARTLINE
+        jsr     lcd_write_cmd       ; set first column
+        lda     #(S1D_SETCOLL_L+3)
+        jsr     lcd_write_cmd
+        ldx     #$00
+pic0    lda     $d20a       ;A800,x
+        jsr     lcd_write_data
+        inx
+        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
+        bne     pic0
+        
+        lda     #(S1D_SETPAGE1)
+        jsr     lcd_write_cmd       
+        lda     #S1D_STARTLINE
+        jsr     lcd_write_cmd       ; set first column
+        lda     #(S1D_SETCOLL_L+3)
+        jsr     lcd_write_cmd
+        ldx     #$00
+pic1    lda     $d20a       ;A800+162,x
+        jsr     lcd_write_data
+        inx
+        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
+        bne     pic1     
+        
+        lda     #(S1D_SETPAGE2)
+        jsr     lcd_write_cmd       
+        lda     #S1D_STARTLINE
+        jsr     lcd_write_cmd       ; set first column
+        lda     #(S1D_SETCOLL_L+3)
+        jsr     lcd_write_cmd
+        ldx     #$00
+pic2    lda     $d20a       ;A800+162+162,x
+        jsr     lcd_write_data
+        inx
+        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
+        bne     pic2
+        
+        lda     #(S1D_SETPAGE3)
+        jsr     lcd_write_cmd       
+        lda     #S1D_STARTLINE
+        jsr     lcd_write_cmd       ; set first column
+        lda     #(S1D_SETCOLL_L+3)
+        jsr     lcd_write_cmd
+        ldx     #$00
+pic3    lda     font8x8,x
+        jsr     lcd_write_data
+        inx
+        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
+        bne     pic3
+        
+        lda     #(S1D_SETPAGE4)
+        jsr     lcd_write_cmd       
+        lda     #S1D_STARTLINE
+        jsr     lcd_write_cmd       ; set first column
+        lda     #(S1D_SETCOLL_L+3)
+        jsr     lcd_write_cmd
+        ldx     #$00
+pic4    lda     font8x8,x
+        jsr     lcd_write_data
+        inx
+        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
+        bne     pic4
+        
+        lda     #(S1D_SETPAGE5)
+        jsr     lcd_write_cmd       
+        lda     #S1D_STARTLINE
+        jsr     lcd_write_cmd       ; set first column
+        lda     #(S1D_SETCOLL_L+3)
+        jsr     lcd_write_cmd
+        ldx     #$00
+pic5    lda     $d20a       ;A800+162+162+162+162+162,x
+        jsr     lcd_write_data
+        inx
+        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
+        bne     pic5
+        
+        lda     #(S1D_SETPAGE6)
+        jsr     lcd_write_cmd       
+        lda     #S1D_STARTLINE
+        jsr     lcd_write_cmd       ; set first column
+        lda     #(S1D_SETCOLL_L+3)
+        jsr     lcd_write_cmd
+        ldx     #$00
+pic6    lda     $d20a       ;A800+162+162+162+162+162+162,x
+        jsr     lcd_write_data
+        inx
+        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
+        bne     pic6
+        
+        lda     #(S1D_SETPAGE7)
+        jsr     lcd_write_cmd       
+        lda     #S1D_STARTLINE
+        jsr     lcd_write_cmd       ; set first column
+        lda     #(S1D_SETCOLL_L+3)
+        jsr     lcd_write_cmd
+        ldx     #$00
+pic7    lda     $d20a       ;A800+162+162+162+162+162+162+162,x
+        jsr     lcd_write_data
+        inx
+        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
+        bne     pic7
+        
+        lda     keycode
+        cmp     #$0c
+        beq     stop
+            
+        jmp     pic
+        
+        
+        
+        
+        
+         org $80
+adr .ds 2
+
+COLOR = 1  ;kolor z zakresu 0,1
+
+;Y = y, X = <x, C = >x
+plot:
+  lda lnadl,y
+  sta adr
+  lda lnadh,y
+  sta adr+1
+
+  ldy byteoff,x
+  scc
+  ldy byteoff+$100,x
+
+  lda (adr),y
+  and bytemask,x
+  ora bytepxl,x
+  sta (adr),y
+  rts
+
+lnadl:
+:64 .byte <(screen+40*#)
+lnadh:
+:64 .byte >(screen+40*#)
+byteoff:
+:162 .byte #/8
+bytemask:
+:162 .byte ~(1 << (7 - (# & %111)))
+bytepxl:
+:162 .byte COLOR << (7 - (# & %111))

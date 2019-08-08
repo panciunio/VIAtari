@@ -54,8 +54,6 @@ lcd_write_cmd:
             
             nop
             nop
-            nop
-            nop
             
             ora #S1D15705_WR
             sta S1D15705_CTRLPORT               
