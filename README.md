@@ -18,3 +18,7 @@ Well, on the market you may find a few sellers which have VIA6522, but...
 **Best sources**
 Original source:
 https://systemembedded.eu/viewtopic.php?f=28&t=41
+
+**Discussion (Polish)**
+
+http://www.atari.org.pl/forum/viewtopic.php?id=16098
