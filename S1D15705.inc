@@ -1,4 +1,4 @@
-;PORT/PIN settings
+;PORT/PIN settings for S1D15705
 
 S1D15705_RD     equ PA0
 S1D15705_WR     equ PA1

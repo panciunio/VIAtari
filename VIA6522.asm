@@ -12,11 +12,6 @@
 ; along with this program; if not, write to the Free Software
 ; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 ; MA 02110-1301, USA.
-; 
-;based on:
-;       CS/A65 SCSI interface - http://www.6502.org/users/andre/csa/scsi/index.html
-;       Daniel Tufvesson Blog - http://www.waveguide.se/?article=buffered-i2c-interface          
-;
 ;
 ; 
 ; name: VIA6522.asm
@@ -32,12 +27,6 @@
 ;Load VIA6522 registers description
 
          ICL "VIA6522.inc"
-
-
-;variables
-
-
-
 
 
 ;VIA library
