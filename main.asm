@@ -19,13 +19,40 @@
 
 keycode equ $02fc
 
+; known subroutines (S1D15705.asm):
+;
+;lcd_init:
+;   don't need any args
+;
+;lcd_clear:
+;   don't need any args
+;
+;lcd_pfill:
+;   A - pattern to fill display memory
+;
+;lcd_write_com:
+;   A - command to write to LCD
+;
+;lcd_write_data
+;   A - data to send to display memory
+;
+
+
+
+
+; waitkbs:  
+;   wait for key
+;       A - defined key code
+;
+
+
          ORG   $6000
          
 ;main program         
         
          
-start   jsr     via_init
-        jsr     lcd_init
+start   jsr     via_init            ; set VIA ports
+        jsr     lcd_init            ; display initialization
         jsr     lcd_clear
        
         lda     #$ff               ; write pattern to LCD memory

@@ -37,8 +37,8 @@ via_init:   lda #%11111111  ;   all bits of PORTB as output
             jsr VIA_PAset   ;   4 - CS1, 3- RESET, 2 - A0, 1 - WR, 0 - RD
             rts
   
-;write command:
-;   A - command
+;lcd_write_command:
+;   A - command to send
 
 lcd_write_cmd:  
             sta S1D15705_DATAPORT               ; set command
@@ -65,7 +65,7 @@ lcd_write_cmd:
             pla             
             rts
             
-;write data
+;lcd_write_data
 ;   A - data to send
 
 lcd_write_data: 
@@ -119,6 +119,7 @@ lcd_read_stat:
             rts
             
 
+;lcd_clear:
 
 lcd_clear:  ldy #(S1D_SETPAGE)
 clearloop1  tya
@@ -146,6 +147,7 @@ floop       jsr lcd_write_data
             rts
         
         
+;lcd_pfill:
         
 lcd_pfill:  ldy #(S1D_SETPAGE)
 fillploop1  tya
@@ -173,7 +175,7 @@ pfloop  jsr     lcd_write_data
         rts
 
 
-;Display initialization
+;lcd_init:
 
 lcd_init:   lda #$ab        ; oscillator ON
             jsr lcd_write_cmd 
