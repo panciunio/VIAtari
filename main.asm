@@ -222,7 +222,7 @@ pic3    lda     font8x8,x
         lda     #(S1D_SETCOLL_L+3)
         jsr     lcd_write_cmd
         ldx     #$00
-pic4    lda     $d20a       ;A800+162+162+162+162,x
+pic4    lda     font8x8,x
         jsr     lcd_write_data
         inx
         cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
