@@ -1,7 +1,6 @@
 ;Please set base address for VIA6522
 ;
-VIAbase     equ $d500
-
+VIAbase     equ $d500    
 
 
 ;VIA6522 registers
