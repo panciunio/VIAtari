@@ -37,268 +37,313 @@ mads 2.0.7
     36 				;
     37 				;lcd_write_data
     38 				;   A - data to send to display memory
-    39 				;
-    40
-    41
-    42
-    43
-    44 				; waitkbs:  
-    45 				;   wait for key
-    46 				;       A - defined key code
-    47 				;
-    48
-    49
-    50
-    51
-    52 				         ORG   $6000
-    53 				         
-    54 				;main program         
-    55 				        
+    39
+    40 				; waitkbs:  
+    41 				;   wait for key
+    42 				;       A - defined key code
+    43 				;
+    44
+    45
+    46 				;variables on 0 page        
+    47 				        org $80
+    48 				        
+    49 = 0080			adr     .ds 2
+    50 = 0082			x       .ds 1
+    51 = 0083			y       .ds 1
+    52 = 0084			a       .ds 1       
+    53
+    54
+    55 				        org   $6000
     56 				         
-    57 FFFF> 6000-70BF> 20 C5 + start   jsr     via_init            ; set VIA ports
-    58 6003 20 83 70		        jsr     lcd_init            ; display initialization
-    59 6006 20 36 70		        jsr     lcd_clear
-    60 				       
-    61 6009 A9 FF		        lda     #$ff               ; write pattern to LCD memory
-    62 600B 8D C4 6F		        sta     pattern
-    63 600E 20 5C 70		        jsr     lcd_pfill
-    64 6011 A9 21		        lda     #$21
-    65 6013 20 8D 61		        jsr     waitkbs
-    66
-    67 				 ;test lcd 
-    68 				                
-    69 6016 A2 00		        ldx     #$00
-    70 6018 BD A2 61		charl0  lda     font5x8,x                                                   
-    71 601B 49 FF		        eor     #$ff
-    72 601D 9D B4 6A		        sta     lcd_page0,x
-    73 6020 E8			        inx
-    74 6021 E0 A0		        cpx     #(LCD_MAX_COLLS - 2)      
-    75 6023 D0 F3		        bne     charl0
-    76 				        
-    77 6025 20 AC 60		        jsr     frm2lcd
-    78 				         
-    79 6028 A9 21		        lda     #$21
-    80 602A 20 8D 61		        jsr     waitkbs     
-    81 				 
-    82 				        
-    83 602D A2 00		        ldx     #$00
-    84 602F BD 00 E2		charl1  lda     $e200,x
-    85 6032 9D 56 6B		        sta     lcd_page1,x
-    86 6035 E8			        inx
-    87 6036 E0 A0		        cpx     #(LCD_MAX_COLLS - 2)      
-    88 6038 D0 F5		        bne     charl1
-    89 				        
-    90 603A 20 AC 60		        jsr     frm2lcd
-    91 				        
-    92 				        
+    57 				;main program         
+    58 				        
+    59 				         
+    60 FFFF> 6000-6712> 20 7A + start   jsr     via_init            ; set VIA ports
+    61 6003 20 3D 63		        jsr     lcd_init            ; display initialization
+    62 6006 20 E7 61		        jsr     lcd_clear
+    63 				       
+    64 6009 A9 FF		        lda     #$ff               ; write pattern to LCD memory
+    65 600B 8D 12 66		        sta     pattern
+    66 600E 20 EC 61		        jsr     lcd_pfill
+    67 				        
+    68 6011 A9 21		        lda     #$21
+    69 				        ;jsr     waitkbs
+    70
+    71 				 ;test lcd 
+    72 				                
+    73 6013 A2 00		        ldx     #$00
+    74 6015 BD 82 63		charl0  lda     font5x8,x                                                   
+    75 6018 49 FF		        eor     #$ff
+    76 601A 9D 13 67		        sta     lcd_page0,x
+    77 601D E8			        inx
+    78 601E E0 A0		        cpx     #(LCD_MAX_COLLS - 2)      
+    79 6020 D0 F3		        bne     charl0
+    80 				        
+    81 6022 20 13 62		        jsr     frm2lcd
+    82 				         
+    83 6025 A9 21		        lda     #$21
+    84 				        ;jsr     waitkbs     
+    85 				 
+    86 				        
+    87 6027 A2 00		        ldx     #$00
+    88 6029 BD 00 E0		charl1  lda     $e000,x
+    89 602C 9D B5 67		        sta     lcd_page1,x
+    90 602F E8			        inx
+    91 6030 E0 A0		        cpx     #(LCD_MAX_COLLS - 2)      
+    92 6032 D0 F5		        bne     charl1
     93 				        
-    94 603D A9 21		        lda     #$21
-    95 603F 20 8D 61		        jsr     waitkbs
-    96
-    97 				        
-    98 6042 A2 00		        ldx     #$00                ; get data from Atari chars generator (ROM)
-    99 6044 BD 00 E1		charl2  lda     $e100,x
-   100 6047 9D F8 6B		        sta     lcd_page2,x
-   101 604A E8			        inx
-   102 604B E0 A0		        cpx     #(LCD_MAX_COLLS - 2)     
-   103 604D D0 F5		        bne     charl2
-   104 				        
-   105 604F 20 AC 60		        jsr     frm2lcd
+    94 6034 20 13 62		        jsr     frm2lcd
+    95 				        
+    96 6037 A9 21		        lda     #$21
+    97 				        ;jsr     waitkbs
+    98
+    99 				        
+   100 6039 A2 00		        ldx     #$00                ; get data from Atari chars generator (ROM)
+   101 603B BD 00 E1		charl2  lda     $e100,x
+   102 603E 9D 57 68		        sta     lcd_page2,x
+   103 6041 E8			        inx
+   104 6042 E0 A0		        cpx     #(LCD_MAX_COLLS - 2)     
+   105 6044 D0 F5		        bne     charl2
    106 				        
-   107 6052 A9 21		        lda     #$21
-   108 6054 20 8D 61		        jsr     waitkbs
-   109
-   110
-   111 				        
-   112 6057 A2 00		        ldx     #$00
-   113 6059 BD 00 E1		charl3  lda     $e100,x
-   114 605C 9D 9A 6C		        sta     lcd_page3,x
-   115 605F E8			        inx
-   116 6060 E0 A0		        cpx     #(LCD_MAX_COLLS - 2)    
-   117 6062 D0 F5		        bne     charl3    
-   118 				        
-   119 6064 20 AC 60		        jsr     frm2lcd
-   120 				       
-   121 6067 A9 21		        lda     #$21
-   122 6069 20 8D 61		        jsr     waitkbs             
-   123
-   124
-   125 				        
-   126 606C A2 00		        ldx     #$00
-   127 606E BD 00 E1		charl4  lda     $e100,x
-   128 6071 9D 3C 6D		        sta     lcd_page4,x
-   129 6074 E8			        inx
-   130 6075 E0 A0		        cpx     #(LCD_MAX_COLLS - 2)     
-   131 6077 D0 F5		        bne     charl4 
-   132
-   133 6079 20 AC 60		        jsr     frm2lcd
+   107 6046 20 13 62		        jsr     frm2lcd
+   108 				        
+   109 6049 A9 21		        lda     #$21
+   110 				        ;jsr     waitkbs
+   111
+   112
+   113 				        
+   114 604B A2 00		        ldx     #$00
+   115 604D BD 00 E2		charl3  lda     $e200,x
+   116 6050 9D F9 68		        sta     lcd_page3,x
+   117 6053 E8			        inx
+   118 6054 E0 A0		        cpx     #(LCD_MAX_COLLS - 2)    
+   119 6056 D0 F5		        bne     charl3    
+   120 				        
+   121 6058 20 13 62		        jsr     frm2lcd
+   122 				       
+   123 605B A9 21		        lda     #$21
+   124 				        ;jsr     waitkbs             
+   125
+   126
+   127 				        
+   128 605D A2 00		        ldx     #$00
+   129 605F BD 00 E3		charl4  lda     $e300,x
+   130 6062 9D 9B 69		        sta     lcd_page4,x
+   131 6065 E8			        inx
+   132 6066 E0 A0		        cpx     #(LCD_MAX_COLLS - 2)     
+   133 6068 D0 F5		        bne     charl4 
    134
-   135 607C A9 21		        lda     #$21
-   136 607E 20 8D 61		        jsr     waitkbs     
-   137 				        
-   138
+   135 606A 20 13 62		        jsr     frm2lcd
+   136
+   137 606D A9 21		        lda     #$21
+   138 				        ;jsr     waitkbs     
    139 				        
-   140 6081 A2 00		        ldx     #$00
-   141 6083 BD 82 63		charl5  lda     font8x8,x
-   142 6086 49 FF		        eor     #$ff
-   143 6088 9D DE 6D		        sta     lcd_page5,x
-   144 608B E8			        inx
-   145 608C E0 A0		        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
-   146 608E D0 F3		        bne     charl5 
-   147 				        
-   148 6090 20 AC 60		        jsr     frm2lcd
+   140
+   141 				        
+   142 606F A2 00		        ldx     #$00
+   143 6071 BD 62 65		charl5  lda     font8x8,x
+   144 6074 49 FF		        eor     #$ff
+   145 6076 9D 3D 6A		        sta     lcd_page5,x
+   146 6079 E8			        inx
+   147 607A E0 A0		        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
+   148 607C D0 F3		        bne     charl5 
    149 				        
-   150 6093 A9 21		        lda     #$21
-   151 6095 20 8D 61		        jsr     waitkbs 
-   152
-   153
+   150 607E 20 13 62		        jsr     frm2lcd
+   151 				        
+   152 6081 A9 21		        lda     #$21
+   153 				        ;jsr     waitkbs 
    154
-   155 				        
-   156 6098			mloop   ;jsr     frm2lcd     ;show frame
-   157
-   158 6098 AD 0A D2		        lda     random
-   159 609B 8D C4 6F		        sta     pattern
-   160 609E 20 5C 70		        jsr     lcd_pfill
-   161 				        
-   162 60A1 AD FC 02		        lda     keycode
-   163 60A4 C9 0C		        cmp     #$0c
-   164 60A6 F0 03		        beq     stop
-   165 				            
-   166 60A8 4C 98 60		        jmp     mloop
-   167
-   168 60AB			stop:
-   169 60AB 00			        brk
-   170
-   171
-   172
-   173 				;subroutines
-   174
-   175
-   176 60AC			frm2lcd:
-   177 60AC A9 B0		        lda     #(S1D_SETPAGE0)
-   178 60AE 20 D0 6F		        jsr     lcd_write_cmd       
-   179 60B1 A9 40		        lda     #S1D_STARTLINE
-   180 60B3 20 D0 6F		        jsr     lcd_write_cmd       ; set first column
-   181 60B6 A9 03		        lda     #(S1D_SETCOLL_L+3)
-   182 60B8 20 D0 6F		        jsr     lcd_write_cmd
-   183 60BB A2 00		        ldx     #$00
-   184 60BD BD B4 6A		page0   lda     lcd_page0,x
-   185 60C0 20 F3 6F		        jsr     lcd_write_data
-   186 60C3 E8			        inx
-   187 60C4 E0 A0		        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
-   188 60C6 D0 F5		        bne     page0
-   189 				        
-   190 60C8 A9 B1		        lda     #(S1D_SETPAGE1)
-   191 60CA 20 D0 6F		        jsr     lcd_write_cmd       
-   192 60CD A9 40		        lda     #S1D_STARTLINE
-   193 60CF 20 D0 6F		        jsr     lcd_write_cmd       ; set first column
-   194 60D2 A9 03		        lda     #(S1D_SETCOLL_L+3)
-   195 60D4 20 D0 6F		        jsr     lcd_write_cmd
-   196 60D7 A2 00		        ldx     #$00
-   197 60D9 BD 56 6B		page1   lda     lcd_page1,x
-   198 60DC 20 F3 6F		        jsr     lcd_write_data
-   199 60DF E8			        inx
-   200 60E0 E0 A0		        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
-   201 60E2 D0 F5		        bne     page1     
-   202 				        
-   203 60E4 A9 B2		        lda     #(S1D_SETPAGE2)
-   204 60E6 20 D0 6F		        jsr     lcd_write_cmd       
-   205 60E9 A9 40		        lda     #S1D_STARTLINE
-   206 60EB 20 D0 6F		        jsr     lcd_write_cmd       ; set first column
-   207 60EE A9 03		        lda     #(S1D_SETCOLL_L+3)
-   208 60F0 20 D0 6F		        jsr     lcd_write_cmd
-   209 60F3 A2 00		        ldx     #$00
-   210 60F5 BD 9A 6C		page2   lda     lcd_page3,x
-   211 60F8 20 F3 6F		        jsr     lcd_write_data
-   212 60FB E8			        inx
-   213 60FC E0 A0		        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
-   214 60FE D0 F5		        bne     page2
-   215 				        
-   216 6100 A9 B3		        lda     #(S1D_SETPAGE3)
-   217 6102 20 D0 6F		        jsr     lcd_write_cmd       
-   218 6105 A9 40		        lda     #S1D_STARTLINE
-   219 6107 20 D0 6F		        jsr     lcd_write_cmd       ; set first column
-   220 610A A9 03		        lda     #(S1D_SETCOLL_L+3)
-   221 610C 20 D0 6F		        jsr     lcd_write_cmd
-   222 610F A2 00		        ldx     #$00
-   223 6111 BD 9A 6C		page3   lda     lcd_page3,x
-   224 6114 20 F3 6F		        jsr     lcd_write_data
-   225 6117 E8			        inx
-   226 6118 E0 A0		        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
-   227 611A D0 F5		        bne     page3
-   228 				        
-   229 611C A9 B4		        lda     #(S1D_SETPAGE4)
-   230 611E 20 D0 6F		        jsr     lcd_write_cmd       
-   231 6121 A9 40		        lda     #S1D_STARTLINE
-   232 6123 20 D0 6F		        jsr     lcd_write_cmd       ; set first column
-   233 6126 A9 03		        lda     #(S1D_SETCOLL_L+3)
-   234 6128 20 D0 6F		        jsr     lcd_write_cmd
-   235 612B A2 00		        ldx     #$00
-   236 612D BD 3C 6D		page4   lda     lcd_page4,x
-   237 6130 20 F3 6F		        jsr     lcd_write_data
-   238 6133 E8			        inx
-   239 6134 E0 A0		        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
-   240 6136 D0 F5		        bne     page4
-   241 				        
-   242 6138 A9 B5		        lda     #(S1D_SETPAGE5)
-   243 613A 20 D0 6F		        jsr     lcd_write_cmd       
-   244 613D A9 40		        lda     #S1D_STARTLINE
-   245 613F 20 D0 6F		        jsr     lcd_write_cmd       ; set first column
-   246 6142 A9 03		        lda     #(S1D_SETCOLL_L+3)
-   247 6144 20 D0 6F		        jsr     lcd_write_cmd
-   248 6147 A2 00		        ldx     #$00
-   249 6149 BD DE 6D		page5   lda     lcd_page5,x
-   250 614C 20 F3 6F		        jsr     lcd_write_data
-   251 614F E8			        inx
-   252 6150 E0 A0		        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
-   253 6152 D0 F5		        bne     page5
-   254 				        
-   255 6154 A9 B6		        lda     #(S1D_SETPAGE6)
-   256 6156 20 D0 6F		        jsr     lcd_write_cmd       
-   257 6159 A9 40		        lda     #S1D_STARTLINE
-   258 615B 20 D0 6F		        jsr     lcd_write_cmd       ; set first column
-   259 615E A9 03		        lda     #(S1D_SETCOLL_L+3)
-   260 6160 20 D0 6F		        jsr     lcd_write_cmd
-   261 6163 A2 00		        ldx     #$00
-   262 6165 BD 80 6E		page6   lda     lcd_page6,x
-   263 6168 20 F3 6F		        jsr     lcd_write_data
-   264 616B E8			        inx
-   265 616C E0 A0		        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
-   266 616E D0 F5		        bne     page6
+   155
+   156
+   157 				        
+   158 6083			mloop:
+   159 6083 A2 00		        ldx     #$00
+   160 6085 AD 0A D2		ml0     lda     random
+   161 6088 69 AA		        adc     #$aa
+   162 608A 9D 81 6B		        sta     lcd_page7,x
+   163 608D 2D 0A D2		        and     random
+   164 6090 9D DF 6A		        sta     lcd_page6,x
+   165 6093 2D 0A D2		        and     random
+   166 6096 9D 3D 6A		        sta     lcd_page5,x
+   167 6099 2D 0A D2		        and     random
+   168 609C 9D 9B 69		        sta     lcd_page4,x
+   169 609F 2D 0A D2		        and     random
+   170 60A2 9D F9 68		        sta     lcd_page3,x
+   171 60A5 2D 0A D2		        and     random
+   172 60A8 9D 57 68		        sta     lcd_page2,x
+   173 60AB 2D 0A D2		        and     random
+   174 60AE 9D B5 67		        sta     lcd_page1,x
+   175 60B1 2D 0A D2		        and     random
+   176 60B4 9D 13 67		        sta     lcd_page0,x
+   177 60B7 E8			        inx
+   178 60B8 E0 A3		        cpx     #LCD_MAX_COLLS +1 
+   179 60BA D0 C9		        bne     ml0
+   180 				        
+   181 60BC 20 13 62		        jsr     frm2lcd
+   182 				        
+   183 60BF AD FC 02		        lda     keycode
+   184 60C2 C9 21		        cmp     #$21
+   185 60C4 F0 03		        beq     next
+   186 				            
+   187 60C6 4C 83 60		        jmp     mloop
+   188 				        
+   189 60C9			next:
+   190 60C9 20 FE 62		        jsr frmclear
+   191 				        
+   192 				 
+   193 60CC A9 00		        lda #$00
+   194 60CE AA			        tax
+   195 60CF A8			        tay
+   196 				        
+   197 60D0 84 82		ploop   sty x
+   198 60D2 86 83		        stx y
+   199 60D4 85 84		        sta a
+   200 				        
+   201 60D6 38			        sec
+   202 60D7 20 26 63		        jsr plot
+   203
+   204 				        
+   205 60DA A5 84		        lda a
+   206 60DC A6 83		        ldx y
+   207 60DE A4 82		        ldy x
+   208 				        
+   209 60E0 C8			        iny
+   210 60E1 C0 A2		        cpy #$a2
+   211 60E3 D0 EB		        bne ploop
+   212
+   213 60E5 20 13 62		        jsr frm2lcd
+   214
+   215 60E8 A0 00		        ldy #$00
+   216 				        
+   217 60EA E8			        inx
+   218 60EB E0 40		        cpx #$40
+   219 60ED D0 E1		        bne ploop
+   220
+   221 60EF A2 00		        ldx #$00
+   222 60F1 A0 00		        ldy #$00
+   223
+   224 60F3 9A			ploop2  txs
+   225 60F4 98			        tya
+   226 60F5 48			        pha
+   227 				        
+   228 60F6 18			        clc
+   229 60F7 20 26 63		        jsr plot
+   230
+   231 				        
+   232 60FA 68			        pla
+   233 60FB A8			        tay
+   234 60FC BA			        tsx
+   235 				        
+   236 60FD C8			        iny
+   237 60FE C0 A2		        cpy #$a2
+   238 6100 D0 F1		        bne ploop2
+   239
+   240 6102 20 13 62		        jsr frm2lcd
+   241
+   242 6105 A0 00		        ldy #$00
+   243 				        
+   244 6107 E8			        inx
+   245 6108 E0 40		        cpx #$40
+   246 610A D0 E7		        bne ploop2 
+   247 				        
+   248
+   249
+   250 610C A9 00		_plop3  lda #$00
+   251 610E AA			        tax
+   252 610F A8			        tay
+   253
+   254 6110 84 82		ploop3  sty x
+   255 6112 86 83		        stx y
+   256 6114 85 84		        sta a
+   257 				        
+   258 6116 AD 0A D2		        lda random
+   259 6119 2A			        rol
+   260 				        ;sec
+   261 611A 20 26 63		        jsr plot
+   262
+   263 				        
+   264 611D A5 84		        lda a
+   265 611F A6 83		        ldx y
+   266 6121 A4 82		        ldy x
    267 				        
-   268 6170 A9 B7		        lda     #(S1D_SETPAGE7)
-   269 6172 20 D0 6F		        jsr     lcd_write_cmd       
-   270 6175 A9 40		        lda     #S1D_STARTLINE
-   271 6177 20 D0 6F		        jsr     lcd_write_cmd       ; set first column
-   272 617A A9 03		        lda     #(S1D_SETCOLL_L+3)
-   273 617C 20 D0 6F		        jsr     lcd_write_cmd
-   274 617F A2 00		        ldx     #$00
-   275 6181 BD 22 6F		page7   lda     lcd_page7,x
-   276 6184 20 F3 6F		        jsr     lcd_write_data
-   277 6187 E8			        inx
-   278 6188 E0 A0		        cpx     #(LCD_MAX_COLlS - 2)    ;don't fill last 2 colls  
-   279 618A D0 F5		        bne     page7
-   280 				        
-   281 618C 60			        rts
-   282 				        
-   283
-   284
-   285 618D			waitkbs:
-   286 618D 48			        pha
-   287 				              
-   288 618E A9 FF		        lda     #$ff
-   289 6190 8D FC 02		        sta     keycode
-   290 				        
-   291 6193 68			        pla
-   292 				        
-   293 6194 CD FC 02		kbloop  cmp     keycode
-   294 6197 D0 FB		        bne     kbloop
+   268 6123 C8			        iny
+   269 6124 C0 A2		        cpy #$a2
+   270 6126 D0 E8		        bne ploop3
+   271
+   272 				        ;jsr frm2lcd
+   273
+   274 6128 A0 00		        ldy #$00
+   275 				        
+   276 612A E8			        inx
+   277 612B E0 40		        cpx #$40
+   278 612D D0 E1		        bne ploop3
+   279 				        
+   280 612F 20 13 62		        jsr frm2lcd
+   281 				        
+   282
+   283 6132 A2 00		        ldx #$00
+   284 6134 A0 00		        ldy #$00
+   285
+   286 6136 9A			ploop4  txs
+   287 6137 98			        tya
+   288 6138 48			        pha
+   289
+   290 6139 AD 0A D2		        lda random
+   291 613C 2A			        rol        
+   292 				        ;clc
+   293 613D 20 26 63		        jsr plot
+   294
    295 				        
-   296 6199 60			        rts
-   297 				        
-   298
-   299
-   300 619A			        ICL "VIA6522.asm"
+   296 6140 68			        pla
+   297 6141 A8			        tay
+   298 6142 BA			        tsx
+   299 				        
+   300 6143 C8			        iny
+   301 6144 C0 A2		        cpy #$a2
+   302 6146 D0 EE		        bne ploop4
+   303
+   304 				        ;jsr frm2lcd
+   305
+   306 6148 A0 00		        ldy #$00
+   307 				        
+   308 614A E8			        inx
+   309 614B E0 40		        cpx #$40
+   310 614D D0 E7		        bne ploop4 
+   311 				        
+   312 614F 20 13 62		        jsr frm2lcd
+   313 				        
+   314 6152 AD FC 02		        lda  keycode
+   315 6155 C9 0C		        cmp #$0c
+   316 6157 D0 B3		        bne _plop3
+   317 				         
+   318 				               
+   319 				        
+   320 				         
+   321 6159			stop:   
+   322 6159 20 FE 62		        jsr frmclear
+   323 615C 20 13 62		        jsr frm2lcd
+   324 615F 00			        brk
+   325
+   326
+   327
+   328 				;subroutines
+   329 6160			waitkbs:
+   330 6160 48			        pha
+   331 				              
+   332 6161 A9 FF		        lda     #$ff
+   333 6163 8D FC 02		        sta     keycode
+   334 				        
+   335 6166 68			        pla
+   336 				        
+   337 6167 CD FC 02		kbloop  cmp     keycode
+   338 616A D0 FB		        bne     kbloop
+   339 				        
+   340 616C A9 FF		        lda     #$ff
+   341 616E 8D FC 02		        sta     keycode
+   342 				        
+   343 6171 60			        rts
+   344
+   345 6172			        ICL "VIA6522.asm"
      1 				; This program is free software; you can redistribute it and/or modify
      2 				; it under the terms of the GNU General Public License as published by
      3 				; the Free Software Foundation; either version 2 of the License, or
@@ -327,7 +372,7 @@ mads 2.0.7
     26
     27 				;Load VIA6522 registers description
     28
-    29 619A			         ICL "VIA6522.inc"
+    29 6172			         ICL "VIA6522.inc"
      1 				;Please set base address for VIA6522
      2 				;
      3 = D500			VIAbase     equ $d500    
@@ -379,15 +424,15 @@ mads 2.0.7
     35 				;   A - PORTA setting
     36 				;   Y - pool-up setting
     37
-    38 619A 8D 03 D5		VIA_PAset:  sta VIA_DDRA
-    39 619D 60			            rts
+    38 6172 8D 03 D5		VIA_PAset:  sta VIA_DDRA
+    39 6175 60			            rts
     40 				    
     41 				;VIA_PBset:
     42 				;   A - PORTB setting
     43 				;   Y - pool-up setting
     44
-    45 619E 8D 02 D5		VIA_PBset:  sta VIA_DDRB
-    46 61A1 60			            rts
+    45 6176 8D 02 D5		VIA_PBset:  sta VIA_DDRB
+    46 6179 60			            rts
     47 				            
     48 				               
     49 				    
@@ -396,7 +441,7 @@ mads 2.0.7
     52
     53 				         
     54
-   301 61A2			        ICL "S1D15705.asm"
+   346 617A			        ICL "S1D15705.asm"
      1 				/*
      2 				 * This program is free software; you can redistribute it and/or modify
      3 				 * it under the terms of the GNU General Public License as published by
@@ -423,9 +468,336 @@ mads 2.0.7
     23 				;
     24
     25
-    26 				;Load S1D15705 registers description
+    26
     27 				 
-    28 61A2			            ICL "S1D15705.inc"
+    28 				 
+    29 				;VIA initialisation:
+    30
+    31 617A A9 FF		via_init:   lda #%11111111  ;   all bits of PORTB as output
+    32 617C 20 76 61		            jsr VIA_PBset
+    33 				            
+    34 617F A9 1F		            lda #%00011111  ;   5 lower bits of PORTA as output
+    35 6181 20 72 61		            jsr VIA_PAset   ;   4 - CS1, 3- RESET, 2 - A0, 1 - WR, 0 - RD
+    36 6184 60			            rts
+    37 				  
+    38 				;lcd_write_command:
+    39 				;   A - command to send
+    40
+    41 6185			lcd_write_cmd:  
+    42 6185 8D 00 D5		            sta S1D15705_DATAPORT               ; set command
+    43 6188 48			            pha
+    44
+    45 6189 A9 FF		            lda #$ff
+    46 618B 29 EF		            and #S1D15705_CS_N
+    47 618D 8D 01 D5		            sta S1D15705_CTRLPORT               ; set chip  enabled
+    48 6190 29 FB		            and #S1D15705_A0_N
+    49 6192 8D 01 D5		            sta S1D15705_CTRLPORT               ; command type
+    50 6195 29 FD		            and #S1D15705_WR_N
+    51 6197 8D 01 D5		            sta S1D15705_CTRLPORT               ; send command
+    52 				            
+    53 				            ;nop
+    54 				            ;nop
+    55 				            ;nop
+    56 619A EA			            nop
+    57 				            
+    58 619B 09 02		            ora #S1D15705_WR
+    59 619D 8D 01 D5		            sta S1D15705_CTRLPORT               
+    60 61A0 09 10		            ora #S1D15705_CS
+    61 61A2 8D 01 D5		            sta S1D15705_CTRLPORT
+    62 				            
+    63 61A5 68			            pla             
+    64 61A6 60			            rts
+    65 				            
+    66 				;lcd_write_data
+    67 				;   A - data to send
+    68
+    69 61A7			lcd_write_data: 
+    70 61A7 8D 00 D5		            sta S1D15705_DATAPORT               ; set command
+    71 61AA 48			            pha
+    72 				            
+    73 61AB A9 FF		            lda #$ff
+    74 61AD 29 EF		            and #S1D15705_CS_N
+    75 61AF 8D 01 D5		            sta S1D15705_CTRLPORT               ; set chip  enabled
+    76 				            
+    77 61B2 29 FD		            and #S1D15705_WR_N
+    78 61B4 8D 01 D5		            sta S1D15705_CTRLPORT               ; send data
+    79 				            
+    80 				            ;nop
+    81 				            ;nop
+    82 				            ;nop
+    83 61B7 EA			            nop
+    84
+    85 61B8 09 02		            ora #S1D15705_WR
+    86 61BA 8D 01 D5		            sta S1D15705_CTRLPORT               
+    87 61BD 09 10		            ora #S1D15705_CS
+    88 61BF 8D 01 D5		            sta S1D15705_CTRLPORT
+    89
+    90 61C2 68			            pla
+    91 61C3 60			            rts
+    92
+    93 61C4			lcd_read_stat:  
+    94 61C4 98			            tya
+    95 61C5 48			            pha
+    96 				            
+    97 61C6 A9 FF		            lda #$ff
+    98 61C8 29 EF		            and #S1D15705_CS_N
+    99 61CA 8D 01 D5		            sta S1D15705_CTRLPORT               ; set chip enabled
+   100 61CD 29 FB		            and #S1D15705_A0_N
+   101 61CF 8D 01 D5		            sta S1D15705_CTRLPORT               ; command type
+   102 				            
+   103 61D2 A0 00		            ldy #$00
+   104 61D4 8C 02 D5		            sty S1D15705_DATAPORT_DIR           ; set DATAPORT as input         
+   105 				            
+   106 61D7 29 FE		            and #S1D15705_RD_N
+   107 61D9 8D 01 D5		            sta S1D15705_CTRLPORT               ; send status command
+   108 				            
+   109 61DC AD 00 D5		            lda S1D15705_DATAPORT               ; store status in A
+   110 				            
+   111 61DF A0 FF		            ldy #$ff
+   112 61E1 8C 02 D5		            sty S1D15705_DATAPORT_DIR           ; set DATAPORT as output
+   113 				            
+   114 61E4 68			            pla
+   115 61E5 A8			            tay
+   116 				            
+   117 61E6 60			            rts
+   118 				            
+   119
+   120 				;lcd_clear:
+   121 				;lcd_pfill:
+   122 61E7 A9 00		lcd_clear:  lda #$00
+   123 61E9 8D 12 66		            sta pattern
+   124 61EC A0 B0		lcd_pfill:  ldy #(S1D_SETPAGE)
+   125 61EE 98			fillploop1  tya
+   126 61EF 20 85 61		            jsr lcd_write_cmd
+   127 61F2 A9 40		            lda #S1D_STARTLINE
+   128 61F4 20 85 61		            jsr lcd_write_cmd        
+   129 				            
+   130 61F7 20 00 62		            jsr pfill
+   131 				            
+   132 61FA C8			            iny
+   133 61FB C0 B9		            cpy #(S1D_SETPAGE +9)
+   134 61FD D0 EF		            bne fillploop1
+   135 61FF 60			            rts
+   136 				            
+   137 6200 A9 00		pfill   lda     #S1D_SETCOLL_L
+   138 6202 20 85 61		        jsr     lcd_write_cmd
+   139 				        
+   140 6205 A2 00		        ldx     #$00
+   141 6207 AD 12 66		        lda     pattern
+   142 				        
+   143 620A 20 A7 61		pfloop  jsr     lcd_write_data
+   144 620D E8			        inx
+   145 620E E0 AA		        cpx #170
+   146 6210 D0 F8		        bne pfloop
+   147 6212 60			        rts
+   148
+   149 				;frm2lcd - send frame from RAM to LCD memory
+   150 				;
+   151 6213			frm2lcd:
+   152
+   153 6213 48			        pha
+   154 6214 8A			        txa
+   155 6215 48			        pha
+   156 6216 98			        tya
+   157 6217 48			        pha
+   158 				        
+   159 6218 A9 B0		        lda     #(S1D_SETPAGE0)
+   160 621A 20 85 61		        jsr     lcd_write_cmd       
+   161 621D A9 40		        lda     #S1D_STARTLINE
+   162 621F 20 85 61		        jsr     lcd_write_cmd       ; set first column
+   163 6222 A9 03		        lda     #(S1D_SETCOLL_L+3)
+   164 6224 20 85 61		        jsr     lcd_write_cmd
+   165 6227 A2 00		        ldx     #$00
+   166 6229 BD 13 67		page0   lda     lcd_page0,x
+   167 622C 20 A7 61		        jsr     lcd_write_data
+   168 622F E8			        inx
+   169 6230 E0 A2		        cpx     #(LCD_MAX_COLlS)   
+   170 6232 D0 F5		        bne     page0
+   171 				        
+   172 6234 A9 B1		        lda     #(S1D_SETPAGE1)
+   173 6236 20 85 61		        jsr     lcd_write_cmd       
+   174 6239 A9 40		        lda     #S1D_STARTLINE
+   175 623B 20 85 61		        jsr     lcd_write_cmd       ; set first column
+   176 623E A9 03		        lda     #(S1D_SETCOLL_L+3)
+   177 6240 20 85 61		        jsr     lcd_write_cmd
+   178 6243 A2 00		        ldx     #$00
+   179 6245 BD B5 67		page1   lda     lcd_page1,x
+   180 6248 20 A7 61		        jsr     lcd_write_data
+   181 624B E8			        inx
+   182 624C E0 A2		        cpx     #(LCD_MAX_COLlS)   
+   183 624E D0 F5		        bne     page1     
+   184 				        
+   185 6250 A9 B2		        lda     #(S1D_SETPAGE2)
+   186 6252 20 85 61		        jsr     lcd_write_cmd       
+   187 6255 A9 40		        lda     #S1D_STARTLINE
+   188 6257 20 85 61		        jsr     lcd_write_cmd       ; set first column
+   189 625A A9 03		        lda     #(S1D_SETCOLL_L+3)
+   190 625C 20 85 61		        jsr     lcd_write_cmd
+   191 625F A2 00		        ldx     #$00
+   192 6261 BD 57 68		page2   lda     lcd_page2,x
+   193 6264 20 A7 61		        jsr     lcd_write_data
+   194 6267 E8			        inx
+   195 6268 E0 A2		        cpx     #(LCD_MAX_COLlS)
+   196 626A D0 F5		        bne     page2
+   197 				        
+   198 626C A9 B3		        lda     #(S1D_SETPAGE3)
+   199 626E 20 85 61		        jsr     lcd_write_cmd       
+   200 6271 A9 40		        lda     #S1D_STARTLINE
+   201 6273 20 85 61		        jsr     lcd_write_cmd       ; set first column
+   202 6276 A9 03		        lda     #(S1D_SETCOLL_L+3)
+   203 6278 20 85 61		        jsr     lcd_write_cmd
+   204 627B A2 00		        ldx     #$00
+   205 627D BD F9 68		page3   lda     lcd_page3,x
+   206 6280 20 A7 61		        jsr     lcd_write_data
+   207 6283 E8			        inx
+   208 6284 E0 A2		        cpx     #(LCD_MAX_COLlS)
+   209 6286 D0 F5		        bne     page3
+   210 				        
+   211 6288 A9 B4		        lda     #(S1D_SETPAGE4)
+   212 628A 20 85 61		        jsr     lcd_write_cmd       
+   213 628D A9 40		        lda     #S1D_STARTLINE
+   214 628F 20 85 61		        jsr     lcd_write_cmd       ; set first column
+   215 6292 A9 03		        lda     #(S1D_SETCOLL_L+3)
+   216 6294 20 85 61		        jsr     lcd_write_cmd
+   217 6297 A2 00		        ldx     #$00
+   218 6299 BD 9B 69		page4   lda     lcd_page4,x
+   219 629C 20 A7 61		        jsr     lcd_write_data
+   220 629F E8			        inx
+   221 62A0 E0 A2		        cpx     #(LCD_MAX_COLlS)
+   222 62A2 D0 F5		        bne     page4
+   223 				        
+   224 62A4 A9 B5		        lda     #(S1D_SETPAGE5)
+   225 62A6 20 85 61		        jsr     lcd_write_cmd       
+   226 62A9 A9 40		        lda     #S1D_STARTLINE
+   227 62AB 20 85 61		        jsr     lcd_write_cmd       ; set first column
+   228 62AE A9 03		        lda     #(S1D_SETCOLL_L+3)
+   229 62B0 20 85 61		        jsr     lcd_write_cmd
+   230 62B3 A2 00		        ldx     #$00
+   231 62B5 BD 3D 6A		page5   lda     lcd_page5,x
+   232 62B8 20 A7 61		        jsr     lcd_write_data
+   233 62BB E8			        inx
+   234 62BC E0 A2		        cpx     #(LCD_MAX_COLlS)
+   235 62BE D0 F5		        bne     page5
+   236 				        
+   237 62C0 A9 B6		        lda     #(S1D_SETPAGE6)
+   238 62C2 20 85 61		        jsr     lcd_write_cmd       
+   239 62C5 A9 40		        lda     #S1D_STARTLINE
+   240 62C7 20 85 61		        jsr     lcd_write_cmd       ; set first column
+   241 62CA A9 03		        lda     #(S1D_SETCOLL_L+3)
+   242 62CC 20 85 61		        jsr     lcd_write_cmd
+   243 62CF A2 00		        ldx     #$00
+   244 62D1 BD DF 6A		page6   lda     lcd_page6,x
+   245 62D4 20 A7 61		        jsr     lcd_write_data
+   246 62D7 E8			        inx
+   247 62D8 E0 A2		        cpx     #(LCD_MAX_COLlS)
+   248 62DA D0 F5		        bne     page6
+   249 				        
+   250 62DC A9 B7		        lda     #(S1D_SETPAGE7)
+   251 62DE 20 85 61		        jsr     lcd_write_cmd       
+   252 62E1 A9 40		        lda     #S1D_STARTLINE
+   253 62E3 20 85 61		        jsr     lcd_write_cmd       ; set first column
+   254 62E6 A9 03		        lda     #(S1D_SETCOLL_L+3)
+   255 62E8 20 85 61		        jsr     lcd_write_cmd
+   256 62EB A2 00		        ldx     #$00
+   257 62ED BD 81 6B		page7   lda     lcd_page7,x
+   258 62F0 20 A7 61		        jsr     lcd_write_data
+   259 62F3 E8			        inx
+   260 62F4 E0 A2		        cpx     #(LCD_MAX_COLlS)
+   261 62F6 D0 F5		        bne     page7 
+   262 				        
+   263 62F8 68			        pla
+   264 62F9 A8			        tay
+   265 62FA 68			        pla
+   266 62FB AA			        tax
+   267 62FC 68			        pla               
+   268 62FD 60			        rts
+   269
+   270 62FE			frmclear:
+   271 62FE A2 00		        ldx #$0
+   272 6300 A9 00		        lda #$0
+   273 6302 8D 12 66		        sta pattern
+   274 6305			frmfill:
+   275 6305 AD 12 66		        lda pattern
+   276 6308 9D 13 67		frmfl   sta lcd_page0,x
+   277 630B 9D B5 67		        sta lcd_page1,x
+   278 630E 9D 57 68		        sta lcd_page2,x
+   279 6311 9D F9 68		        sta lcd_page3,x
+   280 6314 9D 9B 69		        sta lcd_page4,x
+   281 6317 9D 3D 6A		        sta lcd_page5,x
+   282 631A 9D DF 6A		        sta lcd_page6,x
+   283 631D 9D 81 6B		        sta lcd_page7,x
+   284 6320 E8			        inx
+   285 6321 E0 A2		        cpx #(LCD_MAX_COLLS)
+   286 6323 D0 E3		        bne frmfl
+   287 6325 60			        rts
+   288 				        
+   289 				;C-color (0..1), Y-x coord (0..161), X-y coord (0..63)
+   290
+   291 6326			plot:
+   292 6326 BD 13 66		        lda rowadl,x
+   293 6329 85 80		        sta adr
+   294 632B BD 53 66		        lda rowadh,x
+   295 632E 85 81		        sta adr+1
+   296
+   297 6330 B1 80		        lda (adr),y
+   298 6332 3D 93 66		        and masktab,x
+   299 6335 90 03		        scc
+   300 6337 1D D3 66		        ora pixeltab,x
+   301 633A 91 80		        sta (adr),y
+   302 633C 60			        rts
+   303
+   304 				        
+   305 				;lcd_init:
+   306
+   307 633D			lcd_init:   
+   308 633D A9 00		            lda #$00
+   309 633F 8D 01 D5		            sta S1D15705_CTRLPORT   ;perform RESET
+   310 				            
+   311 6342 EA			            nop
+   312 6343 EA			            nop
+   313 6344 EA			            nop            
+   314 				                        
+   315 6345 A9 AB		            lda #$ab        ; oscillator ON
+   316 6347 20 85 61		            jsr lcd_write_cmd 
+   317 				                
+   318 634A A9 A3		            lda #$a3        ; LCD bias value   1/9
+   319 634C 20 85 61		            jsr lcd_write_cmd
+   320 				            
+   321 634F A9 A7		            lda #S1D_DISROT_RR      ; enable inversion
+   322 6351 20 85 61		            jsr lcd_write_cmd
+   323 				            
+   324 6354 A9 C8		            lda #S1D_COMOUTSS_RR    ; disable mirroring
+   325 6356 20 85 61		            jsr lcd_write_cmd
+   326
+   327 6359 A9 40		            lda #$40        ; line 0
+   328 635B 20 85 61		            jsr lcd_write_cmd
+   329 				   
+   330 635E A9 2B		            lda #$2b        ; power control set to 2
+   331 6360 20 85 61		            jsr lcd_write_cmd
+   332 				                    
+   333 6363 A9 26		            lda #$26        ; voltage adjusting 5V
+   334 6365 20 85 61		            jsr lcd_write_cmd
+   335 				            
+   336 6368 A9 81		            lda #$81        ; Electronic control 1
+   337 636A 20 85 61		            jsr lcd_write_cmd
+   338
+   339 636D A9 13		            lda #$13        ; Electronic control 2
+   340 636F 20 85 61		            jsr lcd_write_cmd
+   341 				            
+   342 6372 A9 AF		            lda #$af        ; LCD ON
+   343 6374 20 85 61		            jsr lcd_write_cmd
+   344 				            
+   345 6377 A9 A5		            lda #$a5        ; All lighting ON
+   346 6379 20 85 61		            jsr lcd_write_cmd
+   347 				            
+   348 637C A9 A4		            lda #$a4        ; All lighting OFF
+   349 637E 20 85 61		            jsr lcd_write_cmd
+   350
+   351 6381 60			            rts
+   352 				            
+   353 				;Load S1D15705 registers description
+   354 				 
+   355 6382			            ICL "S1D15705.inc"
      1 				;PORT/PIN settings for S1D15705
      2
      3 = 0001			S1D15705_RD     equ PA0
@@ -487,516 +859,181 @@ mads 2.0.7
     59 = 00B7			S1D_SETPAGE7        equ %10110111   
     60 = 0010			S1D_SETCOLL_H       equ %00010000   ;value from 00010000 to 00011111 for A7, A6, A5, A4   
     61 = 0000			S1D_SETCOLL_L       equ %00000000   ;value from 00000000 to 00001111 for A3, A2, A1, A0
-    62
-    63
-    64 = 00A2			LCD_MAX_COLLS   equ 162  ; max LCD collumns 
-    65
-    66
-    67 				;definitions
-    68 				.define poke mva #%%2 %%1
-    69
-    70 61A2			    ORG   *
-    71
+    62 = 00A0			S1D_ADCSEL_NR       equ %10100000   ;ADC Select (Segment Driver Direction Select) - Normal Rotation
+    63 = 00A1			S1D_ADCSEL_RR       equ %10100001   ;ADC Select (Segment Driver Direction Select) - Reversal Rotation
+    64 = 00A6			S1D_DISROT_NR       equ %10100110   ;Display Normal Rotation/Reversal - LCD on potential (normal rotation) RAM data HIGH
+    65 = 00A7			S1D_DISROT_RR       equ %10100111   ;Display Normal Rotation/Reversal - LCD on potential (reversal) RAM data LOW
+    66 = 00C0			S1D_COMOUTSS_NR     equ %11000000   ;Common Output State Selection - Normal rotation 
+    67 = 00C8			S1D_COMOUTSS_RR     equ %11001000   ;Common Output State Selection - Reversal
+    68 = 00AC			S1D_STINDIC_OFF     equ %10101100   ;Static Indicator OFF (second byre as data required: 0, 1 or 2)
+    69 = 00AD			S1D_STINDIC_ON      equ %10101101   ;Static Indicator ON (second byre as data required: 0, 1 or 2)
+    70 = 0030			S1D_REVDRIREG       equ %00110000   ;n-Line Reversal Drive Register Set: 00110000 - 00111111
+    71 = 00E4			S1D_REVDRIRST       equ %11100100   ;n-Line Reversal Drive Reset
     72
-    73 61A2			.array font5x8 .byte
-    74  [0000] 00 00 00 00 00	$00, $00, $00, $00, $00 ; space 
-    75  [0005] 00 00 5F 00 00	$00, $00, $5F, $00, $00 ; !
-    76  [000A] 00 07 00 07 00	$00, $07, $00, $07, $00 ; "
-    77  [000F] 14 7F 14 7F 14	$14, $7F, $14, $7F, $14 ; #
-    78  [0014] 24 2A 7F 2A 12	$24, $2A, $7F, $2A, $12 ; $
-    79  [0019] 23 13 08 64 62	$23, $13, $08, $64, $62 ; %
-    80  [001E] 36 49 55 22 50	$36, $49, $55, $22, $50 ; &
-    81  [0023] 00 05 03 00 00	$00, $05, $03, $00, $00 ; '
-    82  [0028] 00 1C 22 41 00	$00, $1C, $22, $41, $00 ; (
-    83  [002D] 00 41 22 1C 00	$00, $41, $22, $1C, $00 ; )
-    84  [0032] 08 2A 1C 2A 08	$08, $2A, $1C, $2A, $08 ; *
-    85  [0037] 08 08 3E 08 08	$08, $08, $3E, $08, $08 ; +
-    86  [003C] 00 50 30 00 00	$00, $50, $30, $00, $00 ; ,
-    87  [0041] 08 08 08 08 08	$08, $08, $08, $08, $08 ; -
-    88  [0046] 00 30 30 00 00	$00, $30, $30, $00, $00 ; .
-    89  [004B] 20 10 08 04 02	$20, $10, $08, $04, $02 ; /
-    90  [0050] 3E 51 49 45 3E	$3E, $51, $49, $45, $3E ; 0
-    91  [0055] 00 42 7F 40 00	$00, $42, $7F, $40, $00 ; 1
-    92  [005A] 42 61 51 49 46	$42, $61, $51, $49, $46 ; 2
-    93  [005F] 21 41 45 4B 31	$21, $41, $45, $4B, $31 ; 3
-    94  [0064] 18 14 12 7F 10	$18, $14, $12, $7F, $10 ; 4
-    95  [0069] 27 45 45 45 39	$27, $45, $45, $45, $39 ; 5
-    96  [006E] 3C 4A 49 49 30	$3C, $4A, $49, $49, $30 ; 6
-    97  [0073] 01 71 09 05 03	$01, $71, $09, $05, $03 ; 7
-    98  [0078] 36 49 49 49 36	$36, $49, $49, $49, $36 ; 8
-    99  [007D] 06 49 49 29 1E	$06, $49, $49, $29, $1E ; 9
-   100  [0082] 00 36 36 00 00	$00, $36, $36, $00, $00 ; :
-   101  [0087] 00 56 36 00 00	$00, $56, $36, $00, $00 ; ;
-   102  [008C] 00 08 14 22 41	$00, $08, $14, $22, $41 ; <
-   103  [0091] 14 14 14 14 14	$14, $14, $14, $14, $14 ; =
-   104  [0096] 41 22 14 08 00	$41, $22, $14, $08, $00 ; >
-   105  [009B] 02 01 51 09 06	$02, $01, $51, $09, $06 ; ?
-   106  [00A0] 32 49 79 41 3E	$32, $49, $79, $41, $3E ; @
-   107  [00A5] 7E 11 11 11 7E	$7E, $11, $11, $11, $7E ; A
-   108  [00AA] 7F 49 49 49 36	$7F, $49, $49, $49, $36 ; B
-   109  [00AF] 3E 41 41 41 22	$3E, $41, $41, $41, $22 ; C
-   110  [00B4] 7F 41 41 22 1C	$7F, $41, $41, $22, $1C ; D
-   111  [00B9] 7F 49 49 49 41	$7F, $49, $49, $49, $41 ; E
-   112  [00BE] 7F 09 09 01 01	$7F, $09, $09, $01, $01 ; F
-   113  [00C3] 3E 41 41 51 32	$3E, $41, $41, $51, $32 ; G
-   114  [00C8] 7F 08 08 08 7F	$7F, $08, $08, $08, $7F ; H
-   115  [00CD] 00 41 7F 41 00	$00, $41, $7F, $41, $00 ; I
-   116  [00D2] 20 40 41 3F 01	$20, $40, $41, $3F, $01 ; J
-   117  [00D7] 7F 08 14 22 41	$7F, $08, $14, $22, $41 ; K
-   118  [00DC] 7F 40 40 40 40	$7F, $40, $40, $40, $40 ; L
-   119  [00E1] 7F 02 04 02 7F	$7F, $02, $04, $02, $7F ; M
-   120  [00E6] 7F 04 08 10 7F	$7F, $04, $08, $10, $7F ; N
-   121  [00EB] 3E 41 41 41 3E	$3E, $41, $41, $41, $3E ; O
-   122  [00F0] 7F 09 09 09 06	$7F, $09, $09, $09, $06 ; P
-   123  [00F5] 3E 41 51 21 5E	$3E, $41, $51, $21, $5E ; Q
-   124  [00FA] 7F 09 19 29 46	$7F, $09, $19, $29, $46 ; R
-   125  [00FF] 46 49 49 49 31	$46, $49, $49, $49, $31 ; S
-   126  [0104] 01 01 7F 01 01	$01, $01, $7F, $01, $01 ; T
-   127  [0109] 3F 40 40 40 3F	$3F, $40, $40, $40, $3F ; U
-   128  [010E] 1F 20 40 20 1F	$1F, $20, $40, $20, $1F ; V
-   129  [0113] 7F 20 18 20 7F	$7F, $20, $18, $20, $7F ; W
-   130  [0118] 63 14 08 14 63	$63, $14, $08, $14, $63 ; X
-   131  [011D] 03 04 78 04 03	$03, $04, $78, $04, $03 ; Y
-   132  [0122] 61 51 49 45 43	$61, $51, $49, $45, $43 ; Z
-   133  [0127] 00 00 7F 41 41	$00, $00, $7F, $41, $41 ; [
-   134  [012C] 02 04 08 10 20	$02, $04, $08, $10, $20 ; "\"
-   135  [0131] 41 41 7F 00 00	$41, $41, $7F, $00, $00 ; ]
-   136  [0136] 04 02 01 02 04	$04, $02, $01, $02, $04 ; ^
-   137  [013B] 40 40 40 40 40	$40, $40, $40, $40, $40 ; _
-   138  [0140] 00 01 02 04 00	$00, $01, $02, $04, $00 ; `
-   139  [0145] 20 54 54 54 78	$20, $54, $54, $54, $78 ; a
-   140  [014A] 7F 48 44 44 38	$7F, $48, $44, $44, $38 ; b
-   141  [014F] 38 44 44 44 20	$38, $44, $44, $44, $20 ; c
-   142  [0154] 38 44 44 48 7F	$38, $44, $44, $48, $7F ; d
-   143  [0159] 38 54 54 54 18	$38, $54, $54, $54, $18 ; e
-   144  [015E] 08 7E 09 01 02	$08, $7E, $09, $01, $02 ; f
-   145  [0163] 08 14 54 54 3C	$08, $14, $54, $54, $3C ; g
-   146  [0168] 7F 08 04 04 78	$7F, $08, $04, $04, $78 ; h
-   147  [016D] 00 44 7D 40 00	$00, $44, $7D, $40, $00 ; i
-   148  [0172] 20 40 44 3D 00	$20, $40, $44, $3D, $00 ; j
-   149  [0177] 00 7F 10 28 44	$00, $7F, $10, $28, $44 ; k
-   150  [017C] 00 41 7F 40 00	$00, $41, $7F, $40, $00 ; l
-   151  [0181] 7C 04 18 04 78	$7C, $04, $18, $04, $78 ; m
-   152  [0186] 7C 08 04 04 78	$7C, $08, $04, $04, $78 ; n
-   153  [018B] 38 44 44 44 38	$38, $44, $44, $44, $38 ; o
-   154  [0190] 7C 14 14 14 08	$7C, $14, $14, $14, $08 ; p
-   155  [0195] 08 14 14 18 7C	$08, $14, $14, $18, $7C ; q
-   156  [019A] 7C 08 04 04 08	$7C, $08, $04, $04, $08 ; r
-   157  [019F] 48 54 54 54 20	$48, $54, $54, $54, $20 ; s
-   158  [01A4] 04 3F 44 40 20	$04, $3F, $44, $40, $20 ; t
-   159  [01A9] 3C 40 40 20 7C	$3C, $40, $40, $20, $7C ; u
-   160  [01AE] 1C 20 40 20 1C	$1C, $20, $40, $20, $1C ; v
-   161  [01B3] 3C 40 30 40 3C	$3C, $40, $30, $40, $3C ; w
-   162  [01B8] 44 28 10 28 44	$44, $28, $10, $28, $44 ; x
-   163  [01BD] 0C 50 50 50 3C	$0C, $50, $50, $50, $3C ; y
-   164  [01C2] 44 64 54 4C 44	$44, $64, $54, $4C, $44 ; z
-   165  [01C7] 00 08 36 41 00	$00, $08, $36, $41, $00 ; // {
-   166  [01CC] 00 00 7F 00 00	$00, $00, $7F, $00, $00 ; // |
-   167  [01D1] 00 41 36 08 00	$00, $41, $36, $08, $00 ; // }
-   168  [01D6] 08 08 2A 1C 08	$08, $08, $2A, $1C, $08 ; ->
-   169  [01DB] 08 1C 2A 08 08	$08, $1C, $2A, $08, $08 ; <-
-   170 				.enda
-   171
-   172 6382			.array font8x8 .byte
-   173  [0000] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   174  [0008] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   175  [0010] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   176  [0018] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   177  [0020] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   178  [0028] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   179  [0030] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   180  [0038] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   181  [0040] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   182  [0048] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   183  [0050] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   184  [0058] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   185  [0060] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   186  [0068] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   187  [0070] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   188  [0078] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   189  [0080] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   190  [0088] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   191  [0090] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   192  [0098] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   193  [00A0] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
-   194  [00A8] 00 00 00 00 00 + $00, $00, $00, $00, $00 ,$00, $00, $00 ; space
-   195 				.enda
-   196
-   197 6432			.array A800 [1666] .byte
-   198  [0000] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   199  [0010] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   200  [0020] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   201  [0030] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   202  [0040] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   203  [0050] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   204  [0060] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   205  [0070] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   206  [0080] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   207  [0090] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   208  [00A0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   209  [00B0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   210  [00C0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   211  [00D0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   212  [00E0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   213  [00F0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   214  [0100] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   215  [0110] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   216  [0120] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   217  [0130] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   218  [0140] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   219  [0150] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   220  [0160] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   221  [0170] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   222  [0180] 00 00 FF 81 81 + $00, $00, $ff, $81, $81, $81, $81, $81, $81, $ff, $00, $00, $00, $00, $00, $00
-   223  [0190] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   224  [01A0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   225  [01B0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   226  [01C0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   227  [01D0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   228  [01E0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   229  [01F0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   230  [0200] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   231  [0210] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   232  [0220] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   233  [0230] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   234  [0240] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   235  [0250] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   236  [0260] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   237  [0270] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   238  [0280] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   239  [0290] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   240  [02A0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   241  [02B0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   242  [02C0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   243  [02D0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   244  [02E0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   245  [02F0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   246  [0300] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   247  [0310] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   248  [0320] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   249  [0330] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   250  [0340] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   251  [0350] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   252  [0360] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   253  [0370] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   254  [0380] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   255  [0390] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   256  [03A0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   257  [03B0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   258  [03C0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   259  [03D0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   260  [03E0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   261  [03F0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   262  [0400] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   263  [0410] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   264  [0420] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   265  [0430] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   266  [0440] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   267  [0450] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   268  [0460] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   269  [0470] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   270  [0480] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   271  [0490] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   272  [04A0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   273  [04B0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   274  [04C0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   275  [04D0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   276  [04E0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   277  [04F0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   278  [0500] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   279 				.enda
-   280
-   281 6AB4			.array screen [$0510] .byte
-   282  [0000]			//$0000-$00ff
-   283  [0000] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   284  [0010] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   285  [0020] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   286  [0030] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   287  [0040] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   288  [0050] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   289  [0060] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   290  [0070] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   291  [0080] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   292  [0090] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   293  [00A0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   294  [00B0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   295  [00C0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   296  [00D0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   297  [00E0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   298  [00F0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00 
-   299  [0100]			//$0100-$01ff
-   300  [0100] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   301  [0110] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   302  [0120] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   303  [0130] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   304  [0140] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   305  [0150] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   306  [0160] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   307  [0170] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   308  [0180] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   309  [0190] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   310  [01A0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   311  [01B0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   312  [01C0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   313  [01D0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   314  [01E0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   315  [01F0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   316  [0200]			//$0200-$02ff
-   317  [0200] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   318  [0210] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   319  [0220] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   320  [0230] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   321  [0240] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   322  [0250] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   323  [0260] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   324  [0270] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   325  [0280] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   326  [0290] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   327  [02A0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   328  [02B0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   329  [02C0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   330  [02D0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   331  [02E0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   332  [02F0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   333  [0300]			//$0300-$03ff
-   334  [0300] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   335  [0310] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   336  [0320] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   337  [0330] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   338  [0340] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   339  [0350] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   340  [0360] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   341  [0370] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   342  [0380] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   343  [0390] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   344  [03A0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   345  [03B0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   346  [03C0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   347  [03D0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   348  [03E0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   349  [03F0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   350  [0400]			//$0400-$04ff
-   351  [0400] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   352  [0410] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   353  [0420] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   354  [0430] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   355  [0440] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   356  [0450] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   357  [0460] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   358  [0470] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   359  [0480] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   360  [0490] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   361  [04A0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   362  [04B0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   363  [04C0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   364  [04D0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   365  [04E0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   366  [04F0] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   367
-   368  [0500]			//$0500-$0509
-   369  [0500] 00 00 00 00 00 + $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-   370 				.enda
-   371
-   372 = 6AB4			lcd_page0   equ (screen)
-   373 = 6B56			lcd_page1   equ (screen + 162*1)
-   374 = 6BF8			lcd_page2   equ (screen + 162*2)
-   375 = 6C9A			lcd_page3   equ (screen + 162*3)
-   376 = 6D3C			lcd_page4   equ (screen + 162*4)
-   377 = 6DDE			lcd_page5   equ (screen + 162*5)
-   378 = 6E80			lcd_page6   equ (screen + 162*6)
-   379 = 6F22			lcd_page7   equ (screen + 162*7)
-   380
-   381 				;.array pattern .byte
-   382 				;$00
-   383 				;.enda
-   384
-   385 6FC4 00			pattern dta   $00
-   386 				 
-   387 				 
-    29 				 
-    30 				 
-    31 				;VIA initialisation:
-    32
-    33 6FC5 A9 FF		via_init:   lda #%11111111  ;   all bits of PORTB as output
-    34 6FC7 20 9E 61		            jsr VIA_PBset
-    35 				            
-    36 6FCA A9 1F		            lda #%00011111  ;   5 lower bits of PORTA as output
-    37 6FCC 20 9A 61		            jsr VIA_PAset   ;   4 - CS1, 3- RESET, 2 - A0, 1 - WR, 0 - RD
-    38 6FCF 60			            rts
-    39 				  
-    40 				;lcd_write_command:
-    41 				;   A - command to send
-    42
-    43 6FD0			lcd_write_cmd:  
-    44 6FD0 8D 00 D5		            sta S1D15705_DATAPORT               ; set command
-    45 6FD3 48			            pha
-    46
-    47 6FD4 A9 FF		            lda #$ff
-    48 6FD6 29 EF		            and #S1D15705_CS_N
-    49 6FD8 8D 01 D5		            sta S1D15705_CTRLPORT               ; set chip  enabled
-    50 6FDB 29 FB		            and #S1D15705_A0_N
-    51 6FDD 8D 01 D5		            sta S1D15705_CTRLPORT               ; command type
-    52 6FE0 29 FD		            and #S1D15705_WR_N
-    53 6FE2 8D 01 D5		            sta S1D15705_CTRLPORT               ; send command
-    54 				            
-    55 6FE5 EA			            nop
-    56 6FE6 EA			            nop
-    57 				            
-    58 6FE7 09 02		            ora #S1D15705_WR
-    59 6FE9 8D 01 D5		            sta S1D15705_CTRLPORT               
-    60 6FEC 09 10		            ora #S1D15705_CS
-    61 6FEE 8D 01 D5		            sta S1D15705_CTRLPORT
-    62 				            
-    63 6FF1 68			            pla             
-    64 6FF2 60			            rts
-    65 				            
-    66 				;lcd_write_data
-    67 				;   A - data to send
-    68
-    69 6FF3			lcd_write_data: 
-    70 6FF3 8D 00 D5		            sta S1D15705_DATAPORT               ; set command
-    71 6FF6 48			            pha
-    72 				            
-    73 6FF7 A9 FF		            lda #$ff
-    74 6FF9 29 EF		            and #S1D15705_CS_N
-    75 6FFB 8D 01 D5		            sta S1D15705_CTRLPORT               ; set chip  enabled
-    76 				            
-    77 6FFE 29 FD		            and #S1D15705_WR_N
-    78 7000 8D 01 D5		            sta S1D15705_CTRLPORT               ; send data
-    79 				            
-    80 7003 EA			            nop
-    81 7004 EA			            nop
-    82 7005 EA			            nop
-    83 7006 EA			            nop
-    84
-    85 7007 09 02		            ora #S1D15705_WR
-    86 7009 8D 01 D5		            sta S1D15705_CTRLPORT               
-    87 700C 09 10		            ora #S1D15705_CS
-    88 700E 8D 01 D5		            sta S1D15705_CTRLPORT
-    89
-    90 7011 68			            pla
-    91 7012 60			            rts
-    92
-    93 7013			lcd_read_stat:  
-    94 7013 98			            tya
-    95 7014 48			            pha
-    96 				            
-    97 7015 A9 FF		            lda #$ff
-    98 7017 29 EF		            and #S1D15705_CS_N
-    99 7019 8D 01 D5		            sta S1D15705_CTRLPORT               ; set chip enabled
-   100 701C 29 FB		            and #S1D15705_A0_N
-   101 701E 8D 01 D5		            sta S1D15705_CTRLPORT               ; command type
-   102 				            
-   103 7021 A0 00		            ldy #$00
-   104 7023 8C 02 D5		            sty S1D15705_DATAPORT_DIR           ; set DATAPORT as input         
-   105 				            
-   106 7026 29 FE		            and #S1D15705_RD_N
-   107 7028 8D 01 D5		            sta S1D15705_CTRLPORT               ; send status command
-   108 				            
-   109 702B AD 00 D5		            lda S1D15705_DATAPORT               ; store status in A
-   110 				            
-   111 702E A0 FF		            ldy #$ff
-   112 7030 8C 02 D5		            sty S1D15705_DATAPORT_DIR           ; set DATAPORT as output
-   113 				            
-   114 7033 68			            pla
-   115 7034 A8			            tay
-   116 				            
-   117 7035 60			            rts
-   118 				            
-   119
-   120 				;lcd_clear:
-   121
-   122 7036 A0 B0		lcd_clear:  ldy #(S1D_SETPAGE)
-   123 7038 98			clearloop1  tya
-   124 7039 20 D0 6F		            jsr lcd_write_cmd
-   125 703C A9 40		            lda #S1D_STARTLINE
-   126 703E 20 D0 6F		            jsr lcd_write_cmd        
-   127 				            
-   128 7041 20 4A 70		            jsr cfill
-   129 				            
-   130 7044 C8			            iny
-   131 7045 C0 B9		            cpy #(S1D_SETPAGE +9)
-   132 7047 D0 EF		            bne clearloop1
-   133 7049 60			            rts
-   134 				            
-   135 704A A9 00		cfill       lda #S1D_SETCOLL_L
-   136 704C 20 D0 6F		            jsr lcd_write_cmd
-   137 				        
-   138 704F A2 00		            ldx #$00
-   139 7051 A9 00		            lda #$00
-   140
-   141 7053 20 F3 6F		floop       jsr lcd_write_data
-   142 7056 E8			            inx
-   143 7057 E0 AA		            cpx #170
-   144 7059 D0 F8		            bne floop
-   145 705B 60			            rts
-   146 				        
-   147 				        
-   148 				;lcd_pfill:
-   149 				        
-   150 705C A0 B0		lcd_pfill:  ldy #(S1D_SETPAGE)
-   151 705E 98			fillploop1  tya
-   152 705F 20 D0 6F		            jsr lcd_write_cmd
-   153 7062 A9 40		            lda #S1D_STARTLINE
-   154 7064 20 D0 6F		            jsr lcd_write_cmd        
-   155 				            
-   156 7067 20 70 70		            jsr pfill
-   157 				            
-   158 706A C8			            iny
-   159 706B C0 B9		            cpy #(S1D_SETPAGE +9)
-   160 706D D0 EF		            bne fillploop1
-   161 706F 60			            rts
-   162 				            
-   163 7070 A9 00		pfill   lda     #S1D_SETCOLL_L
-   164 7072 20 D0 6F		        jsr     lcd_write_cmd
-   165 				        
-   166 7075 A2 00		        ldx     #$00
-   167 7077 AD C4 6F		        lda     pattern
-   168 				        
-   169 707A 20 F3 6F		pfloop  jsr     lcd_write_data
-   170 707D E8			        inx
-   171 707E E0 AA		        cpx #170
-   172 7080 D0 F8		        bne pfloop
-   173 7082 60			        rts
-   174
-   175
-   176 				;lcd_init:
-   177
-   178 7083 A9 AB		lcd_init:   lda #$ab        ; oscillator ON
-   179 7085 20 D0 6F		            jsr lcd_write_cmd 
-   180 				                
-   181 7088 A9 A3		            lda #$a3        ; LCD bias value   1/9
-   182 708A 20 D0 6F		            jsr lcd_write_cmd
-   183 				            
-   184 708D A9 A7		            lda #$a7        ; enable inversion
-   185 708F 20 D0 6F		            jsr lcd_write_cmd
-   186 				            
-   187 7092 A9 C8		            lda #$c8        ; disable mirroring
-   188 7094 20 D0 6F		            jsr lcd_write_cmd
-   189 				          
-   190 7097 A9 40		            lda #$40        ; line 0
-   191 7099 20 D0 6F		            jsr lcd_write_cmd
-   192 				   
-   193 709C A9 2B		            lda #$2b        ; power control set to 2
-   194 709E 20 D0 6F		            jsr lcd_write_cmd
-   195 				                    
-   196 70A1 A9 26		            lda #$26        ; voltage adjusting 5V
-   197 70A3 20 D0 6F		            jsr lcd_write_cmd
-   198 				            
-   199 70A6 A9 81		            lda #$81        ; Electronic control 1
-   200 70A8 20 D0 6F		            jsr lcd_write_cmd
-   201
-   202 70AB A9 13		            lda #$13        ; Electronic control 2
-   203 70AD 20 D0 6F		            jsr lcd_write_cmd
-   204 				            
-   205 70B0 A9 AF		            lda #$af        ; LCD ON
-   206 70B2 20 D0 6F		            jsr lcd_write_cmd
-   207 				            
-   208 70B5 A9 A5		            lda #$a5        ; All lighting ON
-   209 70B7 20 D0 6F		            jsr lcd_write_cmd
-   210 				            
-   211 70BA A9 A4		            lda #$a4        ; All lighting OFF
-   212 70BC 20 D0 6F		            jsr lcd_write_cmd
-   213 				            
-   214 70BF 60			            rts
-   302 				 
+    73 = 00A2			LCD_MAX_COLLS   equ 162  ; max LCD collumns 
+    74
+    75
+    76 				;definitions
+    77 				.define poke mva #%%2 %%1
+    78
+    79 6382			    ORG   *
+    80
+    81
+    82 6382			.array font5x8 .byte
+    83  [0000] 00 00 00 00 00	$00, $00, $00, $00, $00 ; space 
+    84  [0005] 00 00 5F 00 00	$00, $00, $5F, $00, $00 ; !
+    85  [000A] 00 07 00 07 00	$00, $07, $00, $07, $00 ; "
+    86  [000F] 14 7F 14 7F 14	$14, $7F, $14, $7F, $14 ; #
+    87  [0014] 24 2A 7F 2A 12	$24, $2A, $7F, $2A, $12 ; $
+    88  [0019] 23 13 08 64 62	$23, $13, $08, $64, $62 ; %
+    89  [001E] 36 49 55 22 50	$36, $49, $55, $22, $50 ; &
+    90  [0023] 00 05 03 00 00	$00, $05, $03, $00, $00 ; '
+    91  [0028] 00 1C 22 41 00	$00, $1C, $22, $41, $00 ; (
+    92  [002D] 00 41 22 1C 00	$00, $41, $22, $1C, $00 ; )
+    93  [0032] 08 2A 1C 2A 08	$08, $2A, $1C, $2A, $08 ; *
+    94  [0037] 08 08 3E 08 08	$08, $08, $3E, $08, $08 ; +
+    95  [003C] 00 50 30 00 00	$00, $50, $30, $00, $00 ; ,
+    96  [0041] 08 08 08 08 08	$08, $08, $08, $08, $08 ; -
+    97  [0046] 00 30 30 00 00	$00, $30, $30, $00, $00 ; .
+    98  [004B] 20 10 08 04 02	$20, $10, $08, $04, $02 ; /
+    99  [0050] 3E 51 49 45 3E	$3E, $51, $49, $45, $3E ; 0
+   100  [0055] 00 42 7F 40 00	$00, $42, $7F, $40, $00 ; 1
+   101  [005A] 42 61 51 49 46	$42, $61, $51, $49, $46 ; 2
+   102  [005F] 21 41 45 4B 31	$21, $41, $45, $4B, $31 ; 3
+   103  [0064] 18 14 12 7F 10	$18, $14, $12, $7F, $10 ; 4
+   104  [0069] 27 45 45 45 39	$27, $45, $45, $45, $39 ; 5
+   105  [006E] 3C 4A 49 49 30	$3C, $4A, $49, $49, $30 ; 6
+   106  [0073] 01 71 09 05 03	$01, $71, $09, $05, $03 ; 7
+   107  [0078] 36 49 49 49 36	$36, $49, $49, $49, $36 ; 8
+   108  [007D] 06 49 49 29 1E	$06, $49, $49, $29, $1E ; 9
+   109  [0082] 00 36 36 00 00	$00, $36, $36, $00, $00 ; :
+   110  [0087] 00 56 36 00 00	$00, $56, $36, $00, $00 ; ;
+   111  [008C] 00 08 14 22 41	$00, $08, $14, $22, $41 ; <
+   112  [0091] 14 14 14 14 14	$14, $14, $14, $14, $14 ; =
+   113  [0096] 41 22 14 08 00	$41, $22, $14, $08, $00 ; >
+   114  [009B] 02 01 51 09 06	$02, $01, $51, $09, $06 ; ?
+   115  [00A0] 32 49 79 41 3E	$32, $49, $79, $41, $3E ; @
+   116  [00A5] 7E 11 11 11 7E	$7E, $11, $11, $11, $7E ; A
+   117  [00AA] 7F 49 49 49 36	$7F, $49, $49, $49, $36 ; B
+   118  [00AF] 3E 41 41 41 22	$3E, $41, $41, $41, $22 ; C
+   119  [00B4] 7F 41 41 22 1C	$7F, $41, $41, $22, $1C ; D
+   120  [00B9] 7F 49 49 49 41	$7F, $49, $49, $49, $41 ; E
+   121  [00BE] 7F 09 09 01 01	$7F, $09, $09, $01, $01 ; F
+   122  [00C3] 3E 41 41 51 32	$3E, $41, $41, $51, $32 ; G
+   123  [00C8] 7F 08 08 08 7F	$7F, $08, $08, $08, $7F ; H
+   124  [00CD] 00 41 7F 41 00	$00, $41, $7F, $41, $00 ; I
+   125  [00D2] 20 40 41 3F 01	$20, $40, $41, $3F, $01 ; J
+   126  [00D7] 7F 08 14 22 41	$7F, $08, $14, $22, $41 ; K
+   127  [00DC] 7F 40 40 40 40	$7F, $40, $40, $40, $40 ; L
+   128  [00E1] 7F 02 04 02 7F	$7F, $02, $04, $02, $7F ; M
+   129  [00E6] 7F 04 08 10 7F	$7F, $04, $08, $10, $7F ; N
+   130  [00EB] 3E 41 41 41 3E	$3E, $41, $41, $41, $3E ; O
+   131  [00F0] 7F 09 09 09 06	$7F, $09, $09, $09, $06 ; P
+   132  [00F5] 3E 41 51 21 5E	$3E, $41, $51, $21, $5E ; Q
+   133  [00FA] 7F 09 19 29 46	$7F, $09, $19, $29, $46 ; R
+   134  [00FF] 46 49 49 49 31	$46, $49, $49, $49, $31 ; S
+   135  [0104] 01 01 7F 01 01	$01, $01, $7F, $01, $01 ; T
+   136  [0109] 3F 40 40 40 3F	$3F, $40, $40, $40, $3F ; U
+   137  [010E] 1F 20 40 20 1F	$1F, $20, $40, $20, $1F ; V
+   138  [0113] 7F 20 18 20 7F	$7F, $20, $18, $20, $7F ; W
+   139  [0118] 63 14 08 14 63	$63, $14, $08, $14, $63 ; X
+   140  [011D] 03 04 78 04 03	$03, $04, $78, $04, $03 ; Y
+   141  [0122] 61 51 49 45 43	$61, $51, $49, $45, $43 ; Z
+   142  [0127] 00 00 7F 41 41	$00, $00, $7F, $41, $41 ; [
+   143  [012C] 02 04 08 10 20	$02, $04, $08, $10, $20 ; "\"
+   144  [0131] 41 41 7F 00 00	$41, $41, $7F, $00, $00 ; ]
+   145  [0136] 04 02 01 02 04	$04, $02, $01, $02, $04 ; ^
+   146  [013B] 40 40 40 40 40	$40, $40, $40, $40, $40 ; _
+   147  [0140] 00 01 02 04 00	$00, $01, $02, $04, $00 ; `
+   148  [0145] 20 54 54 54 78	$20, $54, $54, $54, $78 ; a
+   149  [014A] 7F 48 44 44 38	$7F, $48, $44, $44, $38 ; b
+   150  [014F] 38 44 44 44 20	$38, $44, $44, $44, $20 ; c
+   151  [0154] 38 44 44 48 7F	$38, $44, $44, $48, $7F ; d
+   152  [0159] 38 54 54 54 18	$38, $54, $54, $54, $18 ; e
+   153  [015E] 08 7E 09 01 02	$08, $7E, $09, $01, $02 ; f
+   154  [0163] 08 14 54 54 3C	$08, $14, $54, $54, $3C ; g
+   155  [0168] 7F 08 04 04 78	$7F, $08, $04, $04, $78 ; h
+   156  [016D] 00 44 7D 40 00	$00, $44, $7D, $40, $00 ; i
+   157  [0172] 20 40 44 3D 00	$20, $40, $44, $3D, $00 ; j
+   158  [0177] 00 7F 10 28 44	$00, $7F, $10, $28, $44 ; k
+   159  [017C] 00 41 7F 40 00	$00, $41, $7F, $40, $00 ; l
+   160  [0181] 7C 04 18 04 78	$7C, $04, $18, $04, $78 ; m
+   161  [0186] 7C 08 04 04 78	$7C, $08, $04, $04, $78 ; n
+   162  [018B] 38 44 44 44 38	$38, $44, $44, $44, $38 ; o
+   163  [0190] 7C 14 14 14 08	$7C, $14, $14, $14, $08 ; p
+   164  [0195] 08 14 14 18 7C	$08, $14, $14, $18, $7C ; q
+   165  [019A] 7C 08 04 04 08	$7C, $08, $04, $04, $08 ; r
+   166  [019F] 48 54 54 54 20	$48, $54, $54, $54, $20 ; s
+   167  [01A4] 04 3F 44 40 20	$04, $3F, $44, $40, $20 ; t
+   168  [01A9] 3C 40 40 20 7C	$3C, $40, $40, $20, $7C ; u
+   169  [01AE] 1C 20 40 20 1C	$1C, $20, $40, $20, $1C ; v
+   170  [01B3] 3C 40 30 40 3C	$3C, $40, $30, $40, $3C ; w
+   171  [01B8] 44 28 10 28 44	$44, $28, $10, $28, $44 ; x
+   172  [01BD] 0C 50 50 50 3C	$0C, $50, $50, $50, $3C ; y
+   173  [01C2] 44 64 54 4C 44	$44, $64, $54, $4C, $44 ; z
+   174  [01C7] 00 08 36 41 00	$00, $08, $36, $41, $00 ; // {
+   175  [01CC] 00 00 7F 00 00	$00, $00, $7F, $00, $00 ; // |
+   176  [01D1] 00 41 36 08 00	$00, $41, $36, $08, $00 ; // }
+   177  [01D6] 08 08 2A 1C 08	$08, $08, $2A, $1C, $08 ; ->
+   178  [01DB] 08 1C 2A 08 08	$08, $1C, $2A, $08, $08 ; <-
+   179 				.enda
+   180
+   181 6562			.array font8x8 .byte
+   182  [0000] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   183  [0008] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   184  [0010] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   185  [0018] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   186  [0020] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   187  [0028] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   188  [0030] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   189  [0038] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   190  [0040] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   191  [0048] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   192  [0050] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   193  [0058] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   194  [0060] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   195  [0068] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   196  [0070] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   197  [0078] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   198  [0080] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   199  [0088] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   200  [0090] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   201  [0098] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   202  [00A0] FF 81 81 81 81 + $ff, $81, $81, $81, $81, $81, $81, $ff ; empty square 
+   203  [00A8] 00 00 00 00 00 + $00, $00, $00, $00, $00 ,$00, $00, $00 ; space
+   204 				.enda
+   205
+   206 				;.array pattern .byte
+   207 				;$00
+   208 				;.enda
+   209
+   210 6612 00			pattern .byte   $00
+   211
+   212
+   213
+   214
+   215 6613			rowadl:
+   216 6613 13 13 13 13 13 13 + :64     .byte <[screen+162*[#/8]]
+   217 6653			rowadh:
+   218 6653 67 67 67 67 67 67 + :64     .byte >[screen+162*[#/8]]
+   219 6693			masktab:
+   220 6693 FE FD FB F7 EF DF + :64     .byte [1 << [# & %111]] ^ $ff
+   221 66D3			pixeltab:
+   222 66D3 01 02 04 08 10 20 + :64     .byte [1 << [# & %111]]
+   223
+   224 = 6713			screen  .ds 162*[64/8] 
+   225
+   226
+   227 = 6713			lcd_page0   equ (screen)
+   228 = 67B5			lcd_page1   equ (screen + 162*1)
+   229 = 6857			lcd_page2   equ (screen + 162*2)
+   230 = 68F9			lcd_page3   equ (screen + 162*3)
+   231 = 699B			lcd_page4   equ (screen + 162*4)
+   232 = 6A3D			lcd_page5   equ (screen + 162*5)
+   233 = 6ADF			lcd_page6   equ (screen + 162*6)
+   234 = 6B81			lcd_page7   equ (screen + 162*7)
+   235
+   236
+   237 				 
+   238 				 
+   347 				 
